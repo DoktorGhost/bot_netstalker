@@ -3,7 +3,10 @@ from telegram import Update
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes
 import time
 import requests
+import os
 
+access_token = os.getenv('access_token')
+telegram_token = os.getenv('telegram_token')
 
 def get_vk(user_id):
     v = 5.131
@@ -11,7 +14,7 @@ def get_vk(user_id):
         'user_ids': user_id,
         'v': v, 
         'fields': 'online',
-        'access_token': 'vk1.a.0jOvpqeqTeITIpdy0tEUZiaPX3PDRsBO45VtJoArcBdRcBLJVKt5XojOp_2r1kejDJHncGZWnc9yOhB_W5RvVsSGac3U1Pv-I3S_V4ePBNmBbzVMz2THFWjbjdi8fG-IzGvt4t-FqcpwFqvvSTyOxjXtR5-Ino6h7V2R0_4sgZpbSnfQL3JumpkZTYsVjIDm'
+        'access_token': access_token
     }
     response = requests.get('https://api.vk.com/method/users.get', params=params)
     return response
@@ -42,7 +45,7 @@ logging.basicConfig(
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Привет! Я - нетсталкер-бот. Напиши мне ID человека в ВК и я прослежу за ним. А когда он появится в сети - я сразу же тебе напишу! (например мой ID 64886819 , а ID Оли - 75341811)")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Привет! Я - нетсталкер-бот. Напиши мне ID человека в ВК и я прослежу за ним. А когда он появится в сети - я сразу же тебе напишу!")
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.text
@@ -59,10 +62,8 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 time.sleep(5)
 
-
-
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('5290234104:AAFAhTcfIlj0L4gC1XIPo9NntkVVcNMZfbM').build()
+    application = ApplicationBuilder().token(telegram_token).build()
     
     start_handler = CommandHandler('start', start)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
